@@ -16,4 +16,7 @@
 # %% Import libraries and functions
 
 # Import libraries
+import pandas as pd
 
+# load data
+df = pd.read_csv('Input/Monatszahlen_Verkehrsunfälle.csv', delimiter=';', decimal=",")
