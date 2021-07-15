@@ -19,13 +19,16 @@
 import pandas as pd
 
 # load data
-df = pd.read_csv('Input/Monatszahlen_Verkehrsunfälle.csv', delimiter=';', decimal=",")
+df = pd.read_csv('Input/Monatszahlen_Verkehrsunfälle.csv')
 
 # Print a list with column names using the pandas.DataFrame.columns method
 list(df.columns)
 
-# Drop unnecessary columns.
+# Drop unnecessary columns
 df.drop(['VORJAHRESWERT','VERAEND_VORMONAT_PROZENT','VERAEND_VORJAHRESMONAT_PROZENT', 'ZWOELF_MONATE_MITTELWERT'],axis=1 ,inplace=True)
+
+# Drop unnecessary rows
+df[df["Month"].str.contains("Summe")==False]
 
 # Visualise historically the number of accidents per category
 categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
