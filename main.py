@@ -36,6 +36,9 @@ df1 = df['Month'].str.extract('.*(\d{2})', expand = False)
 # Replace column 'Month' of df with column of df1
 df = df.assign(Month=df1[:])
 
+# Change the non-numeric objects into integers
+df["Month"] = pd.to_numeric(df["Month"])
+
 # Visualise historically the number of accidents per category
 categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
 
