@@ -28,7 +28,13 @@ list(df.columns)
 df.drop(['VORJAHRESWERT','VERAEND_VORMONAT_PROZENT','VERAEND_VORJAHRESMONAT_PROZENT', 'ZWOELF_MONATE_MITTELWERT'],axis=1 ,inplace=True)
 
 # Drop unnecessary rows
-df[df["Month"].str.contains("Summe")==False]
+df = df[df.Month != 'Summe']
+
+# Change Month Column to numbers between 1-12 and safe to df1
+df1 = df['Month'].str.extract('.*(\d{2})', expand = False)
+
+# Replace column 'Month' of df with column of df1
+df = df.assign(Month=df1[:])
 
 # Visualise historically the number of accidents per category
 categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
