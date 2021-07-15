@@ -11,7 +11,7 @@
 # the monthly values for traffic accidents in Munich until the end of 2020.
 # ------------
 # Input: 
-#   Input data (csv file) -> (Input/)
+#   Input data (csv file) -> (Input/Monatszahlen_Verkehrsunfälle.csv)
 
 # %% Import libraries and functions
 
@@ -20,3 +20,15 @@ import pandas as pd
 
 # load data
 df = pd.read_csv('Input/Monatszahlen_Verkehrsunfälle.csv', delimiter=';', decimal=",")
+
+# Print a list with column names using the pandas.DataFrame.columns method
+list(df.columns)
+
+# Drop unnecessary columns.
+df.drop(['VORJAHRESWERT','VERAEND_VORMONAT_PROZENT','VERAEND_VORJAHRESMONAT_PROZENT', 'ZWOELF_MONATE_MITTELWERT'],axis=1 ,inplace=True)
+
+# Visualise historically the number of accidents per category
+categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
+
+for category in categories: 
+    
