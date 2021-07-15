@@ -39,11 +39,24 @@ df = df.assign(Month=df1[:])
 # Change the non-numeric objects into integers
 df["Month"] = pd.to_numeric(df["Month"])
 
+# Change the non-string objects into strings to be able to filter the df
+df[['Category', 'Accident-type']] = df[['Category', 'Accident-type']].astype(pd.StringDtype())
+
 # Create Column for days as datetime needs days as input
 df["Day"] = 1
 
 # Obtain a datetime column to be able to visualise historically the number of accidents 
 df['date']=pd.to_datetime(df[['Year', 'Month', 'Day']])
+
+# Create df for 'Alkoholunfälle'
+#df_alk = df[df['Category'].isin(['Alkoholunfälle'])]
+                                 #& df['Accident-type'] == 'insgesamt']
+
+# Create df for 'Fluchtunfälle'
+
+# Create df for 'Verkehrsunfälle'
+#
+MyPlots.historically_data(df)
 
 # Visualise historically the number of accidents per category
 categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
