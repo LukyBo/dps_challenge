@@ -39,6 +39,12 @@ df = df.assign(Month=df1[:])
 # Change the non-numeric objects into integers
 df["Month"] = pd.to_numeric(df["Month"])
 
+# Create Column for days as datetime needs days as input
+df["Day"] = 1
+
+# Obtain a datetime column to be able to visualise historically the number of accidents 
+df['date']=pd.to_datetime(df[['Year', 'Month', 'Day']])
+
 # Visualise historically the number of accidents per category
 categories = ['Alkoholunfälle', 'Fluchtunfälle', 'Verkehrsunfälle']
 
