@@ -19,6 +19,8 @@
 import pandas as pd
 import MyPlots
 from prophet import Prophet
+import json
+from prophet.serialize import model_to_json, model_from_json
 
 
 # load data
@@ -37,6 +39,7 @@ df['ds']=pd.to_datetime(df[['Year', 'Month', 'Day']]) # Obtain a datetime column
 df.drop(['VORJAHRESWERT','VERAEND_VORMONAT_PROZENT','VERAEND_VORJAHRESMONAT_PROZENT', 'ZWOELF_MONATE_MITTELWERT', 'Day'],axis=1 ,inplace=True) # Drop unnecessary columns
 df = df.rename(columns={'Value': 'y'}) # renamed the column for the later use in Model
 df = df.loc[(df['Accident-type'] == 'insgesamt')]
+
 # Create df for 'Alkoholunfälle'
 df_alk = df.loc[(df['Category'] == 'Alkoholunf�lle')]
 
@@ -53,9 +56,11 @@ df.dropna(subset = ["y"], inplace=True)
 MyPlots.historically_data(df_alk, df_flucht, df_verkehr)
 
 ## Build Model with Prophet and forecast the accidents for 2021
+
 # Make a list of dataframes
 categories = [df_alk,df_flucht,df_verkehr]
 # Iterate over dataframes
+
 for dataframe in categories: 
     m = Prophet()
     m.fit(dataframe)
