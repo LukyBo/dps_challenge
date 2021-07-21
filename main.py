@@ -55,18 +55,26 @@ df.dropna(subset = ["y"], inplace=True)
 # Generate plot for the number of accidents per category
 MyPlots.historically_data(df_alk, df_flucht, df_verkehr)
 
-## Build Model with Prophet and forecast the accidents for 2021
+## Build Model with Prophet and forecast the accidents for 2021 for the different categories
 
 # Make a list of dataframes
-categories = [df_alk,df_flucht,df_verkehr]
-# Iterate over dataframes
+# categories = [df_alk,df_flucht,df_verkehr]
 
-for dataframe in categories: 
-    m = Prophet()
-    m.fit(dataframe)
-    future = m.make_future_dataframe(periods=12, freq='30d') # fit monthly data and make monthly forecasts for the next 12 months
-    forecast = m.predict(future)
-    dataframe['y'].iloc[-12:] = forecast[['yhat']].iloc[-12:].values.reshape(12)
-    df = df.append(dataframe.iloc[-12:])
+# # Iterate over dataframes
+# for dataframe in categories: 
+#     m = Prophet()
+#     m.fit(dataframe)
+#     future = m.make_future_dataframe(periods=12, freq='30d') # fit monthly data and make monthly forecasts for the next 12 months
+#     forecast = m.predict(future)
+#     dataframe['y'].iloc[-12:] = forecast[['yhat']].iloc[-12:].values.reshape(12)
+#     df = df.append(dataframe.iloc[-12:])
 
+## Build Model with Prophet and forecast the accidents for 2021 for the category 'Alkoholunfälle'
+
+m = Prophet()
+m.fit(df_alk)
+future = m.make_future_dataframe(periods=12, freq='30d') # fit monthly data and make monthly forecasts for the next 12 months
+forecast = m.predict(future)
+df_alk['y'].iloc[-12:] = forecast[['yhat']].iloc[-12:].values.reshape(12)
+df = df.append(df_alk.iloc[-12:])
 
