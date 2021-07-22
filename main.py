@@ -20,11 +20,12 @@ import pandas as pd
 import MyPlots
 from prophet import Prophet
 import json
-from prophet.serialize import model_to_json, model_from_json
+from prophet.serialize import model_to_json
+import pickle
 
 
 # load data
-df = pd.read_csv('Input/Monatszahlen_Verkehrsunfälle.csv')
+df = pd.read_csv('Input/Monatszahlen_Verkehrsunfälle.csv', delimiter=';')
 
 # Data cleansing and adaption
 df = df[df.Month != 'Summe'] # Drop unnecessary rows
@@ -34,11 +35,12 @@ df1 = df['Month'].str.extract('.*(\d{2})', expand = False) # Change Month Column
 df = df.assign(Month=df1[:]) # Replace column 'Month' of df with column of df1
 df["Month"] = pd.to_numeric(df["Month"]) # Change the non-numeric objects into integers
 df[['Category', 'Accident-type']] = df[['Category', 'Accident-type']].astype(pd.StringDtype()) # Change the non-string objects into strings to be able to filter the df
-df["Day"] = 10 # Create Column for days as datetime needs days as input
+df["Day"] = 15 # Create Column for days as datetime needs days as input
 df['ds']=pd.to_datetime(df[['Year', 'Month', 'Day']]) # Obtain a datetime column to be able to visualise historically the number of accidents 
 df.drop(['VORJAHRESWERT','VERAEND_VORMONAT_PROZENT','VERAEND_VORJAHRESMONAT_PROZENT', 'ZWOELF_MONATE_MITTELWERT', 'Day'],axis=1 ,inplace=True) # Drop unnecessary columns
 df = df.rename(columns={'Value': 'y'}) # renamed the column for the later use in Model
 df = df.loc[(df['Accident-type'] == 'insgesamt')]
+
 
 # Create df for 'Alkoholunfälle'
 df_alk = df.loc[(df['Category'] == 'Alkoholunf�lle')]
@@ -49,8 +51,8 @@ df_flucht = df.loc[(df['Category'] == 'Fluchtunf�lle')]
 # Create df for 'Verkehrsunfälle'
 df_verkehr = df.loc[(df['Category'] == 'Verkehrsunf�lle')]
 
-# Drop the lines of the dataframe containing NaN
-df.dropna(subset = ["y"], inplace=True)
+# # Drop the lines of the dataframe containing NaN
+# df.dropna(subset = ["y"], inplace=True)
 
 # Generate plot for the number of accidents per category
 MyPlots.historically_data(df_alk, df_flucht, df_verkehr)
@@ -71,10 +73,15 @@ MyPlots.historically_data(df_alk, df_flucht, df_verkehr)
 
 ## Build Model with Prophet and forecast the accidents for 2021 for the category 'Alkoholunfälle'
 
-m = Prophet()
-m.fit(df_alk)
-future = m.make_future_dataframe(periods=12, freq='30d') # fit monthly data and make monthly forecasts for the next 12 months
-forecast = m.predict(future)
-df_alk['y'].iloc[-12:] = forecast[['yhat']].iloc[-12:].values.reshape(12)
-df = df.append(df_alk.iloc[-12:])
+model = Prophet()
+model.fit(df_alk)
+future = model.make_future_dataframe(periods=12, freq='30d') # fit monthly data and make monthly forecasts for the next 12 months
+forecast = model.predict(future)
+
+# save as pickle file
+with open('forecast_model.pckl', 'wb') as fout:
+    pickle.dump(model, fout)
+
+
+
 
