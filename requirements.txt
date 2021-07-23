@@ -1,0 +1,6 @@
+pandas
+prophet 
+json
+pickle
+model_to_json
+flask
